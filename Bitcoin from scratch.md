@@ -22,7 +22,8 @@ Here is a roadmap of the notebook:
 - Generate the Public key from the Private key
 - Generation of the Bitcoin address
 3) [Bitcoin Wallets](/notebooks/wallets.ipynb)
-- (WIP)
+- Nondeterministic Wallets
+- Deterministic Wallets
 4) [Bitcoin Transactions](/notebooks/transactions.ipynb)
 - (WIP)
 5) [The Bitcoin Network](/notebooks/network.ipynb)
