@@ -68,15 +68,9 @@ To run the Python notebook and explore the Bitcoin study, please follow these st
 
 ## Usage
 
-1. Launch the Jupyter Notebook server by executing the following command in the repository's directory:
-
-   ```bash
-   jupyter notebook
-   ```
-
-2. Open the `btc.ipynb` notebook from the Jupyter dashboard.
-3. Follow the instructions and explanations provided within the notebook to navigate through the Bitcoin study.
-4. Feel free to experiment, modify the code, and explore different aspects of Bitcoin using the provided notebook.
+1. Open the `Bitcoin from scratch.md` file.
+2. Follow the instructions and explanations provided within the md file to navigate through the Bitcoin study.
+3. Feel free to experiment, modify the code, and explore different aspects of Bitcoin using the provided notebook.
 
 ## Contributing
 
