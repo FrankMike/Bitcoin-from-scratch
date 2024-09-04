@@ -1,5 +1,7 @@
 # Bitcoin from scratch
 
+Bitcoin appeared in 2018 with the publication of the white paper titled "Bitcoin: A Peer-to-Peer Electronic Cash System" written by the author under the alias of Satoshi Nakamoto.
+
 Bitcoin is a software program that runs on a decentralized network of computers. The software defines the rules of Bitcoin, including how transactions are verified and how new bitcoins are created.
 Bitcoin uses cryptography to secure transactions and to prevent fraud. Cryptography is the science of encrypting and decrypting data. In Bitcoin, cryptography is used to create digital signatures, which are used to verify the authenticity of transactions.
 
