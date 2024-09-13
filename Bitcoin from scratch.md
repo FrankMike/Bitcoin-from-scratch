@@ -27,7 +27,11 @@ Here is a roadmap of the notebook:
 - Nondeterministic Wallets
 - Deterministic Wallets
 4) [Bitcoin Transactions](/notebooks/transactions.ipynb)
-- (WIP)
+- Transactions Components
+- Inputs
+- Outputs
+    - UTXO
+    - Script
 5) [The Bitcoin Network](/notebooks/network.ipynb)
 - (WIP)
 6) [The Bitcoin Mining](/notebooks/mining.ipynb)
