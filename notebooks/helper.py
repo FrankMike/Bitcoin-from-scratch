@@ -1,6 +1,11 @@
 import hashlib
 
+SIGHASH_ALL = 1
+SIGHASH_NONE = 2
+SIGHASH_SINGLE = 3
 BASE58_ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+TWO_WEEKS = 60 * 60 * 24 * 14
+MAX_TARGET = 0xFFFF * 256 ** (0x1D - 3)
 
 
 def hash160(s):
@@ -133,6 +138,110 @@ def decode_num(element):
         return -result
     else:
         return result
+
+
+def h160_to_p2pkh_address(h160, testnet=False):
+    """Takes a byte sequence hash160 and returns a p2pkh address string"""
+    # p2pkh has a prefix of b'\x00' for mainnet, b'\x6f' for testnet
+    if testnet:
+        prefix = b"\x6f"
+    else:
+        prefix = b"\x00"
+    return encode_base58_checksum(prefix + h160)
+
+
+def h160_to_p2sh_address(h160, testnet=False):
+    """Takes a byte sequence hash160 and returns a p2sh address string"""
+    # p2sh has a prefix of b'\x05' for mainnet, b'\xc4' for testnet
+    if testnet:
+        prefix = b"\xc4"
+    else:
+        prefix = b"\x05"
+    return encode_base58_checksum(prefix + h160)
+
+
+def bits_to_target(bits):
+    """Turns bits into a target (large 256-bit integer)"""
+    # last byte is exponent
+    # the first three bytes are the coefficient in little endian
+    # the formula is:
+    # coefficient * 256**(exponent-3)
+    raise NotImplementedError
+
+
+def target_to_bits(target):
+    """Turns a target integer back into bits"""
+    raw_bytes = target.to_bytes(32, "big")
+    raw_bytes = raw_bytes.lstrip(b"\x00")  # <1>
+    if raw_bytes[0] > 0x7F:  # <2>
+        exponent = len(raw_bytes) + 1
+        coefficient = b"\x00" + raw_bytes[:2]
+    else:
+        exponent = len(raw_bytes)  # <3>
+        coefficient = raw_bytes[:3]  # <4>
+    new_bits = coefficient[::-1] + bytes([exponent])  # <5>
+    return new_bits
+
+
+def calculate_new_bits(previous_bits, time_differential):
+    """Calculates the new bits given
+    a 2016-block time differential and the previous bits"""
+    # if the time differential is greater than 8 weeks, set to 8 weeks
+    if time_differential > TWO_WEEKS * 4:
+        time_differential = TWO_WEEKS * 4
+    # if the time differential is less than half a week, set to half a week
+    if time_differential < TWO_WEEKS // 4:
+        time_differential = TWO_WEEKS // 4
+    # the new target is the previous target * time differential / two weeks
+    new_target = bits_to_target(previous_bits) * time_differential // TWO_WEEKS
+    # if the new target is bigger than MAX_TARGET, set to MAX_TARGET
+    if new_target > MAX_TARGET:
+        new_target = MAX_TARGET
+    # convert the new target to bits
+    return target_to_bits(new_target)
+
+
+def merkle_parent(hash1, hash2):
+    """Takes the binary hashes and calculates the hash256"""
+    # return the hash256 of hash1 + hash2
+    return hash256(hash1 + hash2)
+
+
+def merkle_parent_level(hashes):
+    """Takes a list of binary hashes and returns a list that's half
+    the length"""
+    # if the list has exactly 1 element raise an error
+    if len(hashes) == 1:
+        raise RuntimeError("Cannot take a parent level with only 1 item")
+    # if the list has an odd number of elements, duplicate the last one
+    # and put it at the end so it has an even number of elements
+    if len(hashes) % 2 == 1:
+        hashes.append(hashes[-1])
+    # initialize next level
+    parent_level = []
+    # loop over every pair (use: for i in range(0, len(hashes), 2))
+    for i in range(0, len(hashes), 2):
+        # get the merkle parent of the hashes at index i and i+1
+        parent = merkle_parent(hashes[i], hashes[i + 1])
+        # append parent to parent level
+        parent_level.append(parent)
+    # return parent level
+    return parent_level
+
+
+def merkle_root(hashes):
+    """Takes a list of binary hashes and returns the merkle root"""
+    # current level starts as hashes
+    current_level = hashes
+    # loop until there's exactly 1 element
+    while len(current_level) > 1:
+        # current level becomes the merkle parent level
+        current_level = merkle_parent_level(current_level)
+    # return the 1st item of the current level
+    return current_level[0]
+
+
+# Script Ops
 
 
 def op_0(stack):
