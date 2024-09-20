@@ -23,6 +23,7 @@ Here is a roadmap of the notebook:
 - Generation of the Private key
 - Generate the Public key from the Private key
 - Generation of the Bitcoin address
+- Schnorr Signatures and Taproot
 3) [Bitcoin Wallets](/notebooks/wallets.ipynb)
 - Nondeterministic Wallets
 - Deterministic Wallets
